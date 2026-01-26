@@ -3,6 +3,15 @@
 A fun, gamified web application to track your daily coffee consumption, spending, and unlock achievements along the way!
 
 ![CoffeeCounter Screenshot](https://img.shields.io/badge/Made%20with-☕%20Coffee-brown)
+![AI Generated](https://img.shields.io/badge/Built%20by-Agentic%20AI-purple)
+
+## 🤖 About This Project
+
+**This project was entirely created by an Agentic AI as a test/demonstration of AI-assisted software development.** 
+
+From the initial concept to the final implementation - including the HTML structure, CSS styling, JavaScript logic, gamification system, and this README - everything was generated through a conversation with an AI agent. This showcases how agentic AI can understand requirements, make design decisions, and produce a fully functional web application with minimal human intervention.
+
+---
 
 ## Features
 
