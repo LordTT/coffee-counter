@@ -1,4 +1,4 @@
-// CoffeeCounter Application
+// CoffeeCounter Application with Firebase Authentication & Cloud Storage
 
 // Default coffee prices
 const DEFAULT_PRICES = {
@@ -43,16 +43,248 @@ const ACHIEVEMENTS = [
 // State
 let state = {
     prices: { ...DEFAULT_PRICES },
-    history: [], // Array of { date: 'YYYY-MM-DD', coffees: { type: count }, totalSpent: number }
-    achievements: [], // Array of unlocked achievement IDs
+    history: [],
+    achievements: [],
 };
 
-// Get today's date string
+// Current user
+let currentUser = null;
+let syncTimeout = null;
+
+// ==================== FIREBASE AUTHENTICATION ====================
+
+function initAuth() {
+    // Check if Firebase is configured
+    if (typeof firebase === 'undefined' || !firebase.apps.length) {
+        console.warn('Firebase not configured. Running in local-only mode.');
+        return;
+    }
+
+    // Listen for auth state changes
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            currentUser = user;
+            showSignedInUI(user);
+            showLoading(true);
+            await loadCloudData();
+            showLoading(false);
+        } else {
+            currentUser = null;
+            showSignedOutUI();
+            loadLocalState();
+        }
+        updateUI();
+        renderAchievements();
+    });
+
+    // Sign in button
+    document.getElementById('sign-in-btn').addEventListener('click', signIn);
+    
+    // Sign out button
+    document.getElementById('sign-out-btn').addEventListener('click', signOut);
+}
+
+async function signIn() {
+    try {
+        await auth.signInWithPopup(googleProvider);
+    } catch (error) {
+        console.error('Sign in error:', error);
+        showSyncStatus('error', 'Sign in failed');
+    }
+}
+
+async function signOut() {
+    try {
+        await auth.signOut();
+        loadLocalState();
+        updateUI();
+        renderAchievements();
+    } catch (error) {
+        console.error('Sign out error:', error);
+    }
+}
+
+function showSignedInUI(user) {
+    document.getElementById('user-signed-out').style.display = 'none';
+    document.getElementById('user-signed-in').style.display = 'flex';
+    document.getElementById('user-photo').src = user.photoURL || 'https://via.placeholder.com/35';
+    document.getElementById('user-name').textContent = user.displayName || user.email;
+}
+
+function showSignedOutUI() {
+    document.getElementById('user-signed-out').style.display = 'flex';
+    document.getElementById('user-signed-in').style.display = 'none';
+}
+
+// ==================== CLOUD DATA SYNC ====================
+
+async function loadCloudData() {
+    if (!currentUser) {
+        loadLocalState();
+        return;
+    }
+
+    try {
+        const doc = await db.collection('users').doc(currentUser.uid).get();
+        
+        if (doc.exists) {
+            const cloudData = doc.data();
+            state = {
+                prices: { ...DEFAULT_PRICES, ...cloudData.prices },
+                history: cloudData.history || [],
+                achievements: cloudData.achievements || [],
+            };
+            // Also save to local storage as backup
+            saveLocalState();
+            showSyncStatus('success', 'Data synced');
+        } else {
+            // No cloud data, check for local data to migrate
+            const localData = localStorage.getItem('coffeeCounter');
+            if (localData) {
+                const parsed = JSON.parse(localData);
+                state = {
+                    prices: { ...DEFAULT_PRICES, ...parsed.prices },
+                    history: parsed.history || [],
+                    achievements: parsed.achievements || [],
+                };
+                // Save local data to cloud
+                await saveCloudData();
+                showSyncStatus('success', 'Local data migrated to cloud');
+            } else {
+                // Fresh start
+                state = {
+                    prices: { ...DEFAULT_PRICES },
+                    history: [],
+                    achievements: [],
+                };
+                await saveCloudData();
+            }
+        }
+    } catch (error) {
+        console.error('Error loading cloud data:', error);
+        showSyncStatus('error', 'Failed to load data');
+        loadLocalState();
+    }
+}
+
+async function saveCloudData() {
+    if (!currentUser) {
+        saveLocalState();
+        return;
+    }
+
+    try {
+        showSyncStatus('syncing', 'Syncing...');
+        
+        await db.collection('users').doc(currentUser.uid).set({
+            prices: state.prices,
+            history: state.history,
+            achievements: state.achievements,
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+            email: currentUser.email,
+            displayName: currentUser.displayName
+        });
+        
+        // Also save locally as backup
+        saveLocalState();
+        showSyncStatus('success', 'Saved to cloud');
+    } catch (error) {
+        console.error('Error saving to cloud:', error);
+        showSyncStatus('error', 'Sync failed');
+        saveLocalState();
+    }
+}
+
+function debouncedSaveCloud() {
+    if (syncTimeout) {
+        clearTimeout(syncTimeout);
+    }
+    syncTimeout = setTimeout(() => {
+        saveCloudData();
+    }, 1000);
+}
+
+function showSyncStatus(type, message) {
+    const statusEl = document.getElementById('sync-status');
+    const iconEl = statusEl.querySelector('.sync-icon');
+    const textEl = statusEl.querySelector('.sync-text');
+    
+    statusEl.className = 'sync-status show';
+    
+    switch (type) {
+        case 'syncing':
+            statusEl.classList.add('syncing');
+            iconEl.textContent = '🔄';
+            break;
+        case 'success':
+            iconEl.textContent = '☁️';
+            break;
+        case 'error':
+            statusEl.classList.add('error');
+            iconEl.textContent = '⚠️';
+            break;
+        case 'offline':
+            statusEl.classList.add('offline');
+            iconEl.textContent = '📴';
+            break;
+    }
+    
+    textEl.textContent = message;
+    
+    setTimeout(() => {
+        statusEl.classList.remove('show');
+    }, 3000);
+}
+
+function showLoading(show) {
+    const overlay = document.getElementById('loading-overlay');
+    if (show) {
+        overlay.classList.add('show');
+    } else {
+        overlay.classList.remove('show');
+    }
+}
+
+// ==================== LOCAL STORAGE ====================
+
+function saveLocalState() {
+    localStorage.setItem('coffeeCounter', JSON.stringify(state));
+}
+
+function loadLocalState() {
+    const saved = localStorage.getItem('coffeeCounter');
+    if (saved) {
+        const parsed = JSON.parse(saved);
+        state = {
+            prices: { ...DEFAULT_PRICES, ...parsed.prices },
+            history: parsed.history || [],
+            achievements: parsed.achievements || [],
+        };
+    } else {
+        state = {
+            prices: { ...DEFAULT_PRICES },
+            history: [],
+            achievements: [],
+        };
+    }
+}
+
+// ==================== SAVE STATE (UNIFIED) ====================
+
+function saveState() {
+    if (currentUser) {
+        debouncedSaveCloud();
+    } else {
+        saveLocalState();
+    }
+}
+
+// ==================== CORE FUNCTIONS ====================
+
 function getTodayString() {
     return new Date().toISOString().split('T')[0];
 }
 
-// Get or create today's entry
 function getTodayEntry() {
     const today = getTodayString();
     let entry = state.history.find(h => h.date === today);
@@ -63,7 +295,6 @@ function getTodayEntry() {
     return entry;
 }
 
-// Calculate totals
 function calculateTotals() {
     let totalCoffees = 0;
     let totalSpent = 0;
@@ -80,7 +311,6 @@ function calculateTotals() {
     return { totalCoffees, totalSpent, coffeeBreakdown };
 }
 
-// Get week's coffees
 function getWeekCoffees() {
     const now = new Date();
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -96,7 +326,6 @@ function getWeekCoffees() {
     return count;
 }
 
-// Get month's coffees
 function getMonthCoffees() {
     const now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -112,25 +341,6 @@ function getMonthCoffees() {
     return count;
 }
 
-// Save state to localStorage
-function saveState() {
-    localStorage.setItem('coffeeCounter', JSON.stringify(state));
-}
-
-// Load state from localStorage
-function loadState() {
-    const saved = localStorage.getItem('coffeeCounter');
-    if (saved) {
-        const parsed = JSON.parse(saved);
-        state = {
-            prices: { ...DEFAULT_PRICES, ...parsed.prices },
-            history: parsed.history || [],
-            achievements: parsed.achievements || [],
-        };
-    }
-}
-
-// Update coffee count
 function updateCoffeeCount(type, delta) {
     const entry = getTodayEntry();
     entry.coffees[type] = (entry.coffees[type] || 0) + delta;
@@ -139,7 +349,6 @@ function updateCoffeeCount(type, delta) {
         entry.coffees[type] = 0;
     }
 
-    // Recalculate today's total spent
     entry.totalSpent = 0;
     Object.entries(entry.coffees).forEach(([t, count]) => {
         entry.totalSpent += count * state.prices[t];
@@ -150,7 +359,6 @@ function updateCoffeeCount(type, delta) {
     checkAchievements();
 }
 
-// Check and unlock achievements
 function checkAchievements() {
     const { totalCoffees, totalSpent, coffeeBreakdown } = calculateTotals();
     const todayEntry = getTodayEntry();
@@ -191,7 +399,6 @@ function checkAchievements() {
     renderAchievements();
 }
 
-// Show achievement notification
 function showAchievementNotification(achievement) {
     const notification = document.getElementById('achievement-notification');
     document.getElementById('achievement-title').textContent = achievement.name;
@@ -204,17 +411,16 @@ function showAchievementNotification(achievement) {
     }, 4000);
 }
 
-// Update UI
+// ==================== UI RENDERING ====================
+
 function updateUI() {
     const todayEntry = getTodayEntry();
     const { totalCoffees, totalSpent, coffeeBreakdown } = calculateTotals();
 
-    // Update today's summary
     const todayTotal = Object.values(todayEntry.coffees).reduce((a, b) => a + b, 0);
     document.getElementById('today-total').textContent = todayTotal;
     document.getElementById('today-money').textContent = `$${todayEntry.totalSpent.toFixed(2)}`;
 
-    // Update coffee cards
     document.querySelectorAll('.coffee-card').forEach(card => {
         const type = card.dataset.type;
         const count = todayEntry.coffees[type] || 0;
@@ -222,33 +428,26 @@ function updateUI() {
         card.querySelector('.price').textContent = `$${state.prices[type].toFixed(2)}`;
     });
 
-    // Update statistics
     document.getElementById('total-coffees').textContent = totalCoffees;
     document.getElementById('total-spent').textContent = `$${totalSpent.toFixed(2)}`;
     document.getElementById('week-coffees').textContent = getWeekCoffees();
     document.getElementById('month-coffees').textContent = getMonthCoffees();
 
-    // Daily average
     const daysWithCoffee = state.history.filter(h => Object.values(h.coffees).some(c => c > 0)).length || 1;
     const avgCoffees = (totalCoffees / daysWithCoffee).toFixed(1);
     const avgMoney = (totalSpent / daysWithCoffee).toFixed(2);
     document.getElementById('daily-avg-count').textContent = avgCoffees;
     document.getElementById('daily-avg-money').textContent = `$${avgMoney}`;
 
-    // Favorite coffee
     const favorite = Object.entries(coffeeBreakdown).sort((a, b) => b[1] - a[1])[0];
     document.getElementById('favorite-coffee').textContent = favorite 
         ? `${COFFEE_NAMES[favorite[0]]} (${favorite[1]} cups)` 
         : 'No data yet';
 
-    // Breakdown chart
     renderBreakdownChart(coffeeBreakdown, totalCoffees);
-
-    // History
     renderHistory();
 }
 
-// Render breakdown chart
 function renderBreakdownChart(breakdown, total) {
     const container = document.getElementById('breakdown-chart');
     container.innerHTML = '';
@@ -275,7 +474,6 @@ function renderBreakdownChart(breakdown, total) {
     });
 }
 
-// Render history
 function renderHistory() {
     const container = document.getElementById('history-list');
     container.innerHTML = '';
@@ -306,7 +504,6 @@ function renderHistory() {
     });
 }
 
-// Render achievements
 function renderAchievements() {
     const container = document.getElementById('achievements-grid');
     container.innerHTML = '';
@@ -320,7 +517,6 @@ function renderAchievements() {
         const unlocked = state.achievements.includes(achievement.id);
         const req = achievement.requirement;
 
-        let progress = 0;
         let current = 0;
         let target = req.count || req.amount;
 
@@ -342,7 +538,7 @@ function renderAchievements() {
                 break;
         }
 
-        progress = Math.min((current / target) * 100, 100);
+        const progress = Math.min((current / target) * 100, 100);
 
         const card = document.createElement('div');
         card.className = `achievement-card ${unlocked ? 'unlocked' : 'locked'}`;
@@ -353,13 +549,12 @@ function renderAchievements() {
             <div class="progress">
                 <div class="progress-bar" style="width: ${progress}%"></div>
             </div>
-            <small>${current}/${target}</small>
+            <small>${Math.round(current)}/${target}</small>
         `;
         container.appendChild(card);
     });
 }
 
-// Render price settings
 function renderPriceSettings() {
     const container = document.getElementById('price-settings');
     container.innerHTML = '';
@@ -374,14 +569,12 @@ function renderPriceSettings() {
         container.appendChild(group);
     });
 
-    // Add event listeners
     container.querySelectorAll('input').forEach(input => {
         input.addEventListener('change', (e) => {
             const type = e.target.dataset.type;
             const value = parseFloat(e.target.value) || 0;
             state.prices[type] = value;
             
-            // Recalculate all history totals
             state.history.forEach(day => {
                 day.totalSpent = 0;
                 Object.entries(day.coffees).forEach(([t, count]) => {
@@ -395,7 +588,8 @@ function renderPriceSettings() {
     });
 }
 
-// Initialize tabs
+// ==================== INITIALIZATION ====================
+
 function initTabs() {
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -408,7 +602,6 @@ function initTabs() {
     });
 }
 
-// Initialize counter buttons
 function initCounterButtons() {
     document.querySelectorAll('.coffee-card').forEach(card => {
         const type = card.dataset.type;
@@ -423,7 +616,6 @@ function initCounterButtons() {
     });
 }
 
-// Initialize settings buttons
 function initSettingsButtons() {
     document.getElementById('reset-today').addEventListener('click', () => {
         if (confirm('Are you sure you want to reset today\'s count?')) {
@@ -437,7 +629,7 @@ function initSettingsButtons() {
         }
     });
 
-    document.getElementById('reset-all').addEventListener('click', () => {
+    document.getElementById('reset-all').addEventListener('click', async () => {
         if (confirm('Are you sure you want to reset ALL data? This cannot be undone!')) {
             state = {
                 prices: { ...DEFAULT_PRICES },
@@ -452,7 +644,12 @@ function initSettingsButtons() {
     });
 
     document.getElementById('export-data').addEventListener('click', () => {
-        const dataStr = JSON.stringify(state, null, 2);
+        const exportData = {
+            ...state,
+            exportedAt: new Date().toISOString(),
+            user: currentUser ? { email: currentUser.email, displayName: currentUser.displayName } : null
+        };
+        const dataStr = JSON.stringify(exportData, null, 2);
         const blob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -463,16 +660,20 @@ function initSettingsButtons() {
     });
 }
 
-// Initialize app
 function init() {
-    loadState();
+    // Load local state first (will be overwritten if user is signed in)
+    loadLocalState();
+    
+    // Initialize UI components
     initTabs();
     initCounterButtons();
     initSettingsButtons();
     renderPriceSettings();
     updateUI();
     renderAchievements();
+    
+    // Initialize Firebase Auth (will trigger data load if user is signed in)
+    initAuth();
 }
 
-// Start the app
 document.addEventListener('DOMContentLoaded', init);

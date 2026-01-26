@@ -57,15 +57,61 @@ Unlock 16 unique achievements as you track your coffee journey:
 
 ## Getting Started
 
-### Option 1: Open directly
-Simply open `index.html` in your web browser - no server required!
+### Option 1: Local Only (No Account)
+Simply open `index.html` in your web browser - data will be saved locally in your browser.
 
-### Option 2: Use a local server
+### Option 2: With Google Account (Cloud Sync)
+To enable Google Sign-In and cloud data sync, you need to set up Firebase:
+
+#### Firebase Setup Instructions
+
+1. **Create a Firebase Project**
+   - Go to [Firebase Console](https://console.firebase.google.com/)
+   - Click "Create a project" and follow the steps
+   - Give your project a name (e.g., "coffee-counter")
+
+2. **Enable Google Authentication**
+   - In your Firebase project, go to **Authentication** → **Sign-in method**
+   - Click on **Google** and enable it
+   - Add your email as the support email
+   - Click **Save**
+
+3. **Create Firestore Database**
+   - Go to **Firestore Database** → **Create database**
+   - Start in **test mode** (you can add security rules later)
+   - Choose a location close to you
+
+4. **Get Your Firebase Config**
+   - Go to **Project Settings** (gear icon) → **General**
+   - Scroll down to "Your apps" and click the web icon (`</>`)
+   - Register your app with a nickname
+   - Copy the `firebaseConfig` object
+
+5. **Configure the App**
+   - Open `firebase-config.js` in the project
+   - Replace the placeholder values with your Firebase config:
+   ```javascript
+   const firebaseConfig = {
+       apiKey: "your-api-key",
+       authDomain: "your-project.firebaseapp.com",
+       projectId: "your-project-id",
+       storageBucket: "your-project.appspot.com",
+       messagingSenderId: "123456789",
+       appId: "your-app-id"
+   };
+   ```
+
+6. **Add Authorized Domain** (for deployment)
+   - Go to **Authentication** → **Settings** → **Authorized domains**
+   - Add your deployment domain (e.g., `yourdomain.com`)
+
+### Running the App
+
 ```bash
 # Using Python
 python -m http.server 8000
 
-# Using Node.js (if you have http-server installed)
+# Using Node.js
 npx http-server
 
 # Using PHP
@@ -79,18 +125,34 @@ Then visit `http://localhost:8000` in your browser.
 - **HTML5** - Semantic markup
 - **CSS3** - Modern styling with CSS Grid, Flexbox, and CSS Variables
 - **Vanilla JavaScript** - No frameworks, pure JS
-- **LocalStorage** - Client-side data persistence
+- **Firebase Authentication** - Google Sign-In
+- **Cloud Firestore** - Real-time cloud database
+- **LocalStorage** - Offline backup & guest mode
 
 ## Project Structure
 
 ```
 coffee-counter/
-├── index.html      # Main HTML structure
-├── styles.css      # All styling and responsive design
-├── app.js          # Application logic and state management
-├── .gitignore      # Git ignore file
-└── README.md       # This file
+├── index.html          # Main HTML structure
+├── styles.css          # All styling and responsive design
+├── app.js              # Application logic and state management
+├── firebase-config.js  # Firebase configuration (user must configure)
+├── .gitignore          # Git ignore file
+└── README.md           # This file
 ```
+
+## Features
+
+### 🔐 Authentication
+- **Google Sign-In** - One-click login with your Google account
+- **Guest Mode** - Use the app without signing in (local storage only)
+- **Data Migration** - Local data automatically syncs to cloud on first sign-in
+
+### ☁️ Cloud Sync
+- **Real-time Sync** - Data saved to Firebase Firestore
+- **Cross-device** - Access your data from any device
+- **Offline Support** - Works offline with local backup
+- **Auto-sync** - Changes sync automatically with debouncing
 
 ## Browser Support
 
@@ -102,7 +164,10 @@ Works on all modern browsers:
 
 ## Data Privacy
 
-All your data is stored locally in your browser using LocalStorage. No data is sent to any server - your coffee habits stay private! 🔒
+- **Guest Mode**: All data stored locally in your browser
+- **Signed In**: Data stored in your personal Firebase Firestore document
+- Your data is never shared with third parties
+- You can export or delete your data at any time
 
 ## Contributing
 
