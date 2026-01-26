@@ -724,3 +724,264 @@ header h1 {
     color: var(--cream);
     font-size: 1.1rem;
 }
+
+/* Modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 3000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+    padding: 20px;
+}
+
+.modal-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal {
+    background: var(--cream);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 400px;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.show .modal {
+    transform: translateY(0);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.modal-header h3 {
+    color: var(--coffee-dark);
+    margin: 0;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--coffee-medium);
+    padding: 0;
+    line-height: 1;
+}
+
+.modal-close:hover {
+    color: var(--coffee-dark);
+}
+
+.modal-body {
+    padding: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: var(--coffee-dark);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--coffee-light);
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--coffee-medium);
+}
+
+.modal-footer {
+    display: flex;
+    gap: 10px;
+    padding: 20px;
+    border-top: 1px solid #ddd;
+    justify-content: flex-end;
+}
+
+.btn-secondary {
+    background: #ddd;
+    color: var(--coffee-dark);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: #ccc;
+}
+
+/* Emoji Picker */
+.emoji-picker-trigger {
+    width: 60px;
+    height: 60px;
+    background: white;
+    border: 2px solid var(--coffee-light);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.emoji-picker-trigger:hover {
+    border-color: var(--coffee-medium);
+    transform: scale(1.05);
+}
+
+.emoji-picker-trigger span {
+    font-size: 2rem;
+}
+
+.emoji-picker {
+    display: none;
+    margin-top: 10px;
+    background: white;
+    border: 2px solid var(--coffee-light);
+    border-radius: 15px;
+    padding: 10px;
+}
+
+.emoji-picker.show {
+    display: block;
+}
+
+.emoji-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 5px;
+}
+
+.emoji-option {
+    font-size: 1.5rem;
+    padding: 8px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+}
+
+.emoji-option:hover {
+    background: var(--coffee-light);
+    transform: scale(1.2);
+}
+
+/* Custom Coffees List */
+.custom-coffees-list {
+    margin-bottom: 15px;
+}
+
+.custom-coffee-item {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+}
+
+.custom-coffee-item .coffee-icon {
+    font-size: 2rem;
+    width: 50px;
+    text-align: center;
+}
+
+.custom-coffee-item .coffee-info {
+    flex: 1;
+}
+
+.custom-coffee-item .coffee-name {
+    font-weight: 600;
+    color: var(--coffee-dark);
+}
+
+.custom-coffee-item .coffee-price {
+    color: var(--coffee-medium);
+    font-size: 0.9rem;
+}
+
+.custom-coffee-item .coffee-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-icon {
+    width: 35px;
+    height: 35px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon.edit {
+    background: var(--coffee-light);
+    color: white;
+}
+
+.btn-icon.delete {
+    background: var(--danger);
+    color: white;
+}
+
+.btn-icon:hover {
+    transform: scale(1.1);
+}
+
+/* Add Coffee Hint */
+.add-coffee-hint {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--coffee-medium);
+    display: none;
+}
+
+.add-coffee-hint.show {
+    display: block;
+}
+
+.add-coffee-hint p {
+    margin: 0;
+}
+
+/* Empty state for coffee types */
+.coffee-types:empty + .add-coffee-hint {
+    display: block;
+}

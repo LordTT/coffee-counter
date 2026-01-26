@@ -54,72 +54,12 @@
                 </div>
             </div>
 
-            <div class="coffee-types">
-                <div class="coffee-card" data-type="espresso">
-                    <div class="coffee-icon">☕</div>
-                    <h3>Espresso</h3>
-                    <p class="price" data-price="2.50">$2.50</p>
-                    <div class="counter-controls">
-                        <button class="btn-decrement">-</button>
-                        <span class="count">0</span>
-                        <button class="btn-increment">+</button>
-                    </div>
-                </div>
-
-                <div class="coffee-card" data-type="americano">
-                    <div class="coffee-icon">🫖</div>
-                    <h3>Americano</h3>
-                    <p class="price" data-price="3.00">$3.00</p>
-                    <div class="counter-controls">
-                        <button class="btn-decrement">-</button>
-                        <span class="count">0</span>
-                        <button class="btn-increment">+</button>
-                    </div>
-                </div>
-
-                <div class="coffee-card" data-type="latte">
-                    <div class="coffee-icon">🥛</div>
-                    <h3>Latte</h3>
-                    <p class="price" data-price="4.50">$4.50</p>
-                    <div class="counter-controls">
-                        <button class="btn-decrement">-</button>
-                        <span class="count">0</span>
-                        <button class="btn-increment">+</button>
-                    </div>
-                </div>
-
-                <div class="coffee-card" data-type="cappuccino">
-                    <div class="coffee-icon">🍵</div>
-                    <h3>Cappuccino</h3>
-                    <p class="price" data-price="4.00">$4.00</p>
-                    <div class="counter-controls">
-                        <button class="btn-decrement">-</button>
-                        <span class="count">0</span>
-                        <button class="btn-increment">+</button>
-                    </div>
-                </div>
-
-                <div class="coffee-card" data-type="mocha">
-                    <div class="coffee-icon">🍫</div>
-                    <h3>Mocha</h3>
-                    <p class="price" data-price="5.00">$5.00</p>
-                    <div class="counter-controls">
-                        <button class="btn-decrement">-</button>
-                        <span class="count">0</span>
-                        <button class="btn-increment">+</button>
-                    </div>
-                </div>
-
-                <div class="coffee-card" data-type="coldBrew">
-                    <div class="coffee-icon">🧊</div>
-                    <h3>Cold Brew</h3>
-                    <p class="price" data-price="4.00">$4.00</p>
-                    <div class="counter-controls">
-                        <button class="btn-decrement">-</button>
-                        <span class="count">0</span>
-                        <button class="btn-increment">+</button>
-                    </div>
-                </div>
+            <div class="coffee-types" id="coffee-types">
+                <!-- Coffee cards will be dynamically generated -->
+            </div>
+            
+            <div class="add-coffee-hint" id="add-coffee-hint">
+                <p>No coffees yet! Go to <strong>Settings</strong> to add your custom coffees.</p>
             </div>
         </section>
 
@@ -193,11 +133,14 @@
             <h2>⚙️ Settings</h2>
             
             <div class="settings-section">
-                <h3>Coffee Prices</h3>
-                <p class="settings-desc">Customize prices to match your local coffee shop</p>
-                <div class="price-settings" id="price-settings">
-                    <!-- Price settings will be populated by JavaScript -->
+                <h3>☕ My Coffees</h3>
+                <p class="settings-desc">Create custom coffees for different locations (home, work, café)</p>
+                
+                <div class="custom-coffees-list" id="custom-coffees-list">
+                    <!-- Custom coffees will be populated by JavaScript -->
                 </div>
+                
+                <button class="btn-primary" id="add-coffee-btn">+ Add New Coffee</button>
             </div>
 
             <div class="settings-section">
@@ -207,6 +150,60 @@
                 <button class="btn-primary" id="export-data">Export Data</button>
             </div>
         </section>
+
+        <!-- Add/Edit Coffee Modal -->
+        <div class="modal-overlay" id="coffee-modal">
+            <div class="modal">
+                <div class="modal-header">
+                    <h3 id="modal-title">Add New Coffee</h3>
+                    <button class="modal-close" id="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Icon (click to select)</label>
+                        <div class="emoji-picker-trigger" id="emoji-trigger">
+                            <span id="selected-emoji">☕</span>
+                        </div>
+                        <div class="emoji-picker" id="emoji-picker">
+                            <div class="emoji-grid">
+                                <span class="emoji-option">☕</span>
+                                <span class="emoji-option">🫖</span>
+                                <span class="emoji-option">🥛</span>
+                                <span class="emoji-option">🍵</span>
+                                <span class="emoji-option">🍫</span>
+                                <span class="emoji-option">🧊</span>
+                                <span class="emoji-option">🥤</span>
+                                <span class="emoji-option">🧋</span>
+                                <span class="emoji-option">🍶</span>
+                                <span class="emoji-option">🫗</span>
+                                <span class="emoji-option">🍹</span>
+                                <span class="emoji-option">🥃</span>
+                                <span class="emoji-option">🏠</span>
+                                <span class="emoji-option">🏢</span>
+                                <span class="emoji-option">🏪</span>
+                                <span class="emoji-option">⭐</span>
+                                <span class="emoji-option">💚</span>
+                                <span class="emoji-option">❤️</span>
+                                <span class="emoji-option">💛</span>
+                                <span class="emoji-option">🔥</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="coffee-name">Name</label>
+                        <input type="text" id="coffee-name" placeholder="e.g., Latte (Work)" maxlength="30">
+                    </div>
+                    <div class="form-group">
+                        <label for="coffee-price">Price ($)</label>
+                        <input type="number" id="coffee-price" step="0.01" min="0" placeholder="0.00">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-secondary" id="modal-cancel">Cancel</button>
+                    <button class="btn-primary" id="modal-save">Save Coffee</button>
+                </div>
+            </div>
+        </div>
 
         <!-- Achievement Notification -->
         <div class="achievement-notification" id="achievement-notification">
