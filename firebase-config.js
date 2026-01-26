@@ -1,14 +1,12 @@
-// Firebase Configuration
-// Replace these values with your own Firebase project configuration
-// Get these from: Firebase Console > Project Settings > General > Your apps > Web app
+// Firebase Configuration for CoffeeCounter
 
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyBgvipOFjPBu6PHgRNqx7cSy36TObm_KuQ",
+    authDomain: "coffeecounter-1a0d4.firebaseapp.com",
+    projectId: "coffeecounter-1a0d4",
+    storageBucket: "coffeecounter-1a0d4.firebasestorage.app",
+    messagingSenderId: "195626137893",
+    appId: "1:195626137893:web:3596b27f14e15d2693c2cc"
 };
 
 // Initialize Firebase
