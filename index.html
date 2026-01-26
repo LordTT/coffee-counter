@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>☕ CoffeeCounter</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>☕ CoffeeCounter</h1>
+            <p class="tagline">Track your coffee journey</p>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="counter">Counter</button>
+            <button class="tab-btn" data-tab="achievements">Achievements</button>
+            <button class="tab-btn" data-tab="stats">Statistics</button>
+            <button class="tab-btn" data-tab="settings">Settings</button>
+        </nav>
+
+        <!-- Counter Tab -->
+        <section id="counter" class="tab-content active">
+            <div class="today-summary">
+                <h2>Today's Coffee</h2>
+                <div class="today-count">
+                    <span id="today-total">0</span>
+                    <span class="label">coffees</span>
+                </div>
+                <div class="today-spent">
+                    <span id="today-money">$0.00</span>
+                    <span class="label">spent today</span>
+                </div>
+            </div>
+
+            <div class="coffee-types">
+                <div class="coffee-card" data-type="espresso">
+                    <div class="coffee-icon">☕</div>
+                    <h3>Espresso</h3>
+                    <p class="price" data-price="2.50">$2.50</p>
+                    <div class="counter-controls">
+                        <button class="btn-decrement">-</button>
+                        <span class="count">0</span>
+                        <button class="btn-increment">+</button>
+                    </div>
+                </div>
+
+                <div class="coffee-card" data-type="americano">
+                    <div class="coffee-icon">🫖</div>
+                    <h3>Americano</h3>
+                    <p class="price" data-price="3.00">$3.00</p>
+                    <div class="counter-controls">
+                        <button class="btn-decrement">-</button>
+                        <span class="count">0</span>
+                        <button class="btn-increment">+</button>
+                    </div>
+                </div>
+
+                <div class="coffee-card" data-type="latte">
+                    <div class="coffee-icon">🥛</div>
+                    <h3>Latte</h3>
+                    <p class="price" data-price="4.50">$4.50</p>
+                    <div class="counter-controls">
+                        <button class="btn-decrement">-</button>
+                        <span class="count">0</span>
+                        <button class="btn-increment">+</button>
+                    </div>
+                </div>
+
+                <div class="coffee-card" data-type="cappuccino">
+                    <div class="coffee-icon">🍵</div>
+                    <h3>Cappuccino</h3>
+                    <p class="price" data-price="4.00">$4.00</p>
+                    <div class="counter-controls">
+                        <button class="btn-decrement">-</button>
+                        <span class="count">0</span>
+                        <button class="btn-increment">+</button>
+                    </div>
+                </div>
+
+                <div class="coffee-card" data-type="mocha">
+                    <div class="coffee-icon">🍫</div>
+                    <h3>Mocha</h3>
+                    <p class="price" data-price="5.00">$5.00</p>
+                    <div class="counter-controls">
+                        <button class="btn-decrement">-</button>
+                        <span class="count">0</span>
+                        <button class="btn-increment">+</button>
+                    </div>
+                </div>
+
+                <div class="coffee-card" data-type="coldBrew">
+                    <div class="coffee-icon">🧊</div>
+                    <h3>Cold Brew</h3>
+                    <p class="price" data-price="4.00">$4.00</p>
+                    <div class="counter-controls">
+                        <button class="btn-decrement">-</button>
+                        <span class="count">0</span>
+                        <button class="btn-increment">+</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Achievements Tab -->
+        <section id="achievements" class="tab-content">
+            <h2>🏆 Achievements</h2>
+            <div class="achievements-grid" id="achievements-grid">
+                <!-- Achievements will be populated by JavaScript -->
+            </div>
+        </section>
+
+        <!-- Statistics Tab -->
+        <section id="stats" class="tab-content">
+            <h2>📊 Statistics</h2>
+            
+            <div class="stats-overview">
+                <div class="stat-card">
+                    <h3>All Time</h3>
+                    <div class="stat-value" id="total-coffees">0</div>
+                    <div class="stat-label">coffees</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Spent</h3>
+                    <div class="stat-value" id="total-spent">$0</div>
+                    <div class="stat-label">lifetime</div>
+                </div>
+                <div class="stat-card">
+                    <h3>This Week</h3>
+                    <div class="stat-value" id="week-coffees">0</div>
+                    <div class="stat-label">coffees</div>
+                </div>
+                <div class="stat-card">
+                    <h3>This Month</h3>
+                    <div class="stat-value" id="month-coffees">0</div>
+                    <div class="stat-label">coffees</div>
+                </div>
+            </div>
+
+            <div class="stats-details">
+                <h3>Coffee Breakdown</h3>
+                <div class="breakdown-chart" id="breakdown-chart">
+                    <!-- Chart will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="stats-details">
+                <h3>Daily Average</h3>
+                <div class="daily-avg">
+                    <span id="daily-avg-count">0</span> coffees/day
+                    <span class="avg-money">(<span id="daily-avg-money">$0.00</span>/day)</span>
+                </div>
+            </div>
+
+            <div class="stats-details">
+                <h3>Favorite Coffee</h3>
+                <div class="favorite-coffee" id="favorite-coffee">
+                    No data yet
+                </div>
+            </div>
+
+            <div class="stats-details">
+                <h3>Recent History</h3>
+                <div class="history-list" id="history-list">
+                    <!-- History will be populated by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Settings Tab -->
+        <section id="settings" class="tab-content">
+            <h2>⚙️ Settings</h2>
+            
+            <div class="settings-section">
+                <h3>Coffee Prices</h3>
+                <p class="settings-desc">Customize prices to match your local coffee shop</p>
+                <div class="price-settings" id="price-settings">
+                    <!-- Price settings will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="settings-section">
+                <h3>Data Management</h3>
+                <button class="btn-danger" id="reset-today">Reset Today's Count</button>
+                <button class="btn-danger" id="reset-all">Reset All Data</button>
+                <button class="btn-primary" id="export-data">Export Data</button>
+            </div>
+        </section>
+
+        <!-- Achievement Notification -->
+        <div class="achievement-notification" id="achievement-notification">
+            <div class="achievement-content">
+                <span class="achievement-icon">🏆</span>
+                <div class="achievement-text">
+                    <strong id="achievement-title">Achievement Unlocked!</strong>
+                    <p id="achievement-desc"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

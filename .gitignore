@@ -1,0 +1,17 @@
+# Logs
+*.log
+server.log
+
+# IDE
+.vscode/
+.idea/
+
+# Screenshots
+.browser_screenshots/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node modules (if added later)
+node_modules/

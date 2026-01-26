@@ -1,0 +1,579 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --coffee-dark: #3c2415;
+    --coffee-medium: #6f4e37;
+    --coffee-light: #c4a484;
+    --cream: #f5f0e8;
+    --gold: #d4af37;
+    --success: #4caf50;
+    --danger: #e74c3c;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--coffee-dark) 0%, var(--coffee-medium) 100%);
+    min-height: 100vh;
+    color: var(--coffee-dark);
+}
+
+.app-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    padding: 30px 0;
+    color: var(--cream);
+}
+
+header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 5px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.tagline {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.tab-btn {
+    padding: 12px 24px;
+    border: none;
+    background: var(--cream);
+    color: var(--coffee-dark);
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow);
+}
+
+.tab-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.tab-btn.active {
+    background: var(--gold);
+    color: white;
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+    background: var(--cream);
+    border-radius: 20px;
+    padding: 25px;
+    box-shadow: var(--shadow-lg);
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Today Summary */
+.today-summary {
+    text-align: center;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--coffee-medium), var(--coffee-dark));
+    border-radius: 15px;
+    color: var(--cream);
+    margin-bottom: 25px;
+}
+
+.today-summary h2 {
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+}
+
+.today-count, .today-spent {
+    display: inline-block;
+    margin: 0 20px;
+}
+
+.today-count span:first-child, .today-spent span:first-child {
+    font-size: 2.5rem;
+    font-weight: bold;
+    display: block;
+}
+
+.today-count .label, .today-spent .label {
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* Coffee Cards */
+.coffee-types {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+.coffee-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+}
+
+.coffee-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.coffee-icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.coffee-card h3 {
+    font-size: 1rem;
+    color: var(--coffee-dark);
+    margin-bottom: 5px;
+}
+
+.coffee-card .price {
+    color: var(--coffee-medium);
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.counter-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.counter-controls button {
+    width: 35px;
+    height: 35px;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-decrement {
+    background: var(--coffee-light);
+    color: white;
+}
+
+.btn-increment {
+    background: var(--coffee-medium);
+    color: white;
+}
+
+.counter-controls button:hover {
+    transform: scale(1.1);
+}
+
+.counter-controls button:active {
+    transform: scale(0.95);
+}
+
+.counter-controls .count {
+    font-size: 1.5rem;
+    font-weight: bold;
+    min-width: 40px;
+    color: var(--coffee-dark);
+}
+
+/* Achievements */
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.achievement-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.achievement-card.locked {
+    opacity: 0.6;
+    filter: grayscale(100%);
+}
+
+.achievement-card.unlocked {
+    border: 3px solid var(--gold);
+}
+
+.achievement-card .icon {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.achievement-card h4 {
+    color: var(--coffee-dark);
+    margin-bottom: 5px;
+}
+
+.achievement-card p {
+    font-size: 0.85rem;
+    color: var(--coffee-medium);
+}
+
+.achievement-card .progress {
+    margin-top: 10px;
+    background: #e0e0e0;
+    border-radius: 10px;
+    height: 8px;
+    overflow: hidden;
+}
+
+.achievement-card .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--coffee-medium), var(--gold));
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+/* Statistics */
+.stats-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: var(--shadow);
+}
+
+.stat-card h3 {
+    font-size: 0.9rem;
+    color: var(--coffee-medium);
+    margin-bottom: 10px;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--coffee-dark);
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--coffee-light);
+}
+
+.stats-details {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 15px;
+    box-shadow: var(--shadow);
+}
+
+.stats-details h3 {
+    color: var(--coffee-dark);
+    margin-bottom: 15px;
+    font-size: 1.1rem;
+}
+
+.breakdown-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.breakdown-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.breakdown-item .name {
+    width: 100px;
+    font-size: 0.9rem;
+}
+
+.breakdown-item .bar-container {
+    flex: 1;
+    background: #e0e0e0;
+    border-radius: 10px;
+    height: 20px;
+    overflow: hidden;
+}
+
+.breakdown-item .bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--coffee-light), var(--coffee-medium));
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+.breakdown-item .value {
+    width: 50px;
+    text-align: right;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.daily-avg {
+    font-size: 1.5rem;
+    color: var(--coffee-dark);
+}
+
+.avg-money {
+    font-size: 1rem;
+    color: var(--coffee-medium);
+}
+
+.favorite-coffee {
+    font-size: 1.3rem;
+    color: var(--coffee-dark);
+}
+
+.history-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.history-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.history-item:last-child {
+    border-bottom: none;
+}
+
+.history-date {
+    color: var(--coffee-medium);
+    font-size: 0.9rem;
+}
+
+.history-count {
+    font-weight: bold;
+}
+
+.history-money {
+    color: var(--coffee-medium);
+}
+
+/* Settings */
+.settings-section {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: var(--shadow);
+}
+
+.settings-section h3 {
+    color: var(--coffee-dark);
+    margin-bottom: 5px;
+}
+
+.settings-desc {
+    color: var(--coffee-medium);
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.price-settings {
+    display: grid;
+    gap: 10px;
+}
+
+.price-input-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.price-input-group label {
+    width: 100px;
+    font-weight: 500;
+}
+
+.price-input-group input {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid var(--coffee-light);
+    border-radius: 10px;
+    font-size: 1rem;
+    max-width: 100px;
+}
+
+.price-input-group input:focus {
+    outline: none;
+    border-color: var(--coffee-medium);
+}
+
+.btn-danger {
+    background: var(--danger);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    transition: all 0.3s ease;
+}
+
+.btn-danger:hover {
+    background: #c0392b;
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background: var(--coffee-medium);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background: var(--coffee-dark);
+    transform: translateY(-2px);
+}
+
+/* Achievement Notification */
+.achievement-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, var(--gold), #f4d03f);
+    color: var(--coffee-dark);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-lg);
+    transform: translateX(400px);
+    transition: transform 0.5s ease;
+    z-index: 1000;
+}
+
+.achievement-notification.show {
+    transform: translateX(0);
+}
+
+.achievement-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.achievement-icon {
+    font-size: 2.5rem;
+}
+
+.achievement-text strong {
+    display: block;
+    font-size: 1.1rem;
+    margin-bottom: 5px;
+}
+
+.achievement-text p {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .app-container {
+        padding: 10px;
+    }
+
+    header h1 {
+        font-size: 2rem;
+    }
+
+    .tabs {
+        gap: 5px;
+    }
+
+    .tab-btn {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+
+    .coffee-types {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .today-count, .today-spent {
+        display: block;
+        margin: 10px 0;
+    }
+
+    .achievement-notification {
+        right: 10px;
+        left: 10px;
+        transform: translateY(-200px);
+    }
+
+    .achievement-notification.show {
+        transform: translateY(0);
+    }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--cream);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--coffee-light);
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--coffee-medium);
+}
