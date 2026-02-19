@@ -64,7 +64,7 @@ function initAuth() {
             showSignedOutUI();
             loadLocalState();
         }
-        updateUI();
+        updateUIFunc();
         renderAchievements();
     });
 
@@ -88,7 +88,7 @@ async function signOut() {
     try {
         await auth.signOut();
         loadLocalState();
-        updateUI();
+        updateUIFunc();
         renderAchievements();
     } catch (error) {
         console.error('Sign out error:', error);
@@ -361,7 +361,7 @@ function updateCoffeeCount(type, delta) {
     });
 
     saveState();
-    updateUI();
+    updateUIFunc();
     checkAchievements();
 }
 
@@ -419,6 +419,7 @@ function showAchievementNotification(achievement) {
 
 // ==================== UI RENDERING ====================
 
+// Make updateUI mockable by using a variable reference
 function updateUI() {
     const todayEntry = getTodayEntry();
     const { totalCoffees, totalSpent, coffeeBreakdown } = calculateTotals();
@@ -655,7 +656,7 @@ function saveCoffee() {
     }
 
     saveState();
-    updateUI();
+    updateUIFunc();
     closeModal();
 }
 
@@ -669,7 +670,7 @@ function deleteCoffee(coffeeId) {
 
     state.coffees = state.coffees.filter(c => c.id !== coffeeId);
     saveState();
-    updateUI();
+    updateUIFunc();
 }
 
 function initCoffeeModal() {
@@ -775,7 +776,7 @@ function initSettingsButtons() {
                 state.history.splice(index, 1);
             }
             saveState();
-            updateUI();
+            updateUIFunc();
         }
     });
 
@@ -787,7 +788,7 @@ function initSettingsButtons() {
                 achievements: [],
             };
             saveState();
-            updateUI();
+            updateUIFunc();
             renderAchievements();
         }
     });
@@ -817,7 +818,7 @@ function init() {
     initTabs();
     initSettingsButtons();
     initCoffeeModal();
-    updateUI();
+    updateUIFunc();
     renderAchievements();
     
     // Initialize Firebase Auth (will trigger data load if user is signed in)
@@ -825,3 +826,27 @@ function init() {
 }
 
 document.addEventListener('DOMContentLoaded', init);
+
+// Export functions for testing
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        DEFAULT_COFFEES,
+        ACHIEVEMENTS,
+        state,
+        generateCoffeeId,
+        openAddCoffeeModal,
+        openEditCoffeeModal,
+        closeModal,
+        saveCoffee,
+        deleteCoffee,
+        getCoffeeById,
+        saveState,
+        loadLocalState,
+        updateUI,
+        updateUIFunc,
+        renderAchievements,
+        calculateTotals,
+        getTodayEntry,
+        getTodayString
+    };
+}
